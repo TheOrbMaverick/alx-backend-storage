@@ -1,10 +1,7 @@
--- This script creates an index idx_name_first_score on the names table using the first letter of the name column and the score column.
+-- This script creates an index idx_name_first_score on the table names for the first letter of name and the score.
 
--- Drop the existing index if it exists to avoid conflicts
+-- Comment: Drop the index if it exists
 DROP INDEX IF EXISTS idx_name_first_score ON names;
 
--- Create a new index idx_name_first_score on the first letter of the name column and the score column
-CREATE INDEX idx_name_first_score ON names (SUBSTRING(name, 1, 1), score);
-
--- Verify the index creation
-SHOW INDEX FROM names;
+-- Comment: Create the index on the first letter of the name and score
+CREATE INDEX idx_name_first_score ON names (name(1), score);
