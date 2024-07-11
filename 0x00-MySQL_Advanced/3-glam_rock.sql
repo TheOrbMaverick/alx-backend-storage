@@ -2,8 +2,15 @@
 -- The metal_bands table is imported, and the lifespan is calculated using the formed and split attributes.
 
 -- Comment: Select bands with Glam rock as their main style and calculate their lifespan
-SELECT band_name, 
-       IFNULL(2022 - formed, 0) AS lifespan
-FROM metal_bands
-WHERE FIND_IN_SET('Glam rock', style) > 0
-ORDER BY lifespan DESC;
+SELECT 
+    band_name, 
+    CASE 
+        WHEN split IS NULL THEN 2022 - formed 
+        ELSE split - formed 
+    END AS lifespan
+FROM 
+    metal_bands
+WHERE 
+    FIND_IN_SET('Glam rock', style) > 0
+ORDER BY 
+    lifespan DESC;
