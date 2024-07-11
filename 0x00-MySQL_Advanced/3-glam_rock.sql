@@ -1,23 +1,13 @@
--- Script to rank country origins of bands by the number of non-unique fans
+-- This script ranks country origins of bands, ordered by the number of (non-unique) fans.
+-- It imports the metal_bands table and calculates the total number of fans for each country origin.
 
--- Change to your database
-USE holberton;
+-- Comment: Create a temporary table to aggregate the number of fans by country origin
+CREATE TEMPORARY TABLE fans_by_origin AS
+SELECT origin, SUM(fans) AS nb_fans
+FROM metal_bands
+GROUP BY origin;
 
--- Create a view to rank origins by the number of fans
-CREATE VIEW origin_fan_ranking AS
-SELECT 
-    origin,
-    SUM(fans) AS nb_fans
-FROM 
-    metal_bands
-GROUP BY 
-    origin
-ORDER BY 
-    nb_fans DESC;
-
--- Select from the view
-SELECT 
-    origin,
-    nb_fans
-FROM 
-    origin_fan_ranking;
+-- Comment: Select and order the results by number of fans in descending order
+SELECT origin, nb_fans
+FROM fans_by_origin
+ORDER BY nb_fans DESC;
