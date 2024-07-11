@@ -3,5 +3,5 @@
 -- Comment: Drop the index if it exists
 DROP INDEX IF EXISTS idx_name_first_score ON names;
 
--- Comment: Create the index on the first letter of the name and score
-CREATE INDEX idx_name_first_score ON names (name(1), score);
+-- Comment: Create the index on the first letter of the name and the score
+CREATE INDEX idx_name_first_score ON names (LEFT(name, 1), score);
