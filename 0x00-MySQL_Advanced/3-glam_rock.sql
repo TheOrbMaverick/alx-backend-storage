@@ -1,16 +1,23 @@
--- This script lists all bands with Glam rock as their main style, ranked by their longevity.
--- It calculates the lifespan of each band in years from their formation until 2022.
--- The results are ordered by lifespan in descending order.
+-- Script to rank country origins of bands by the number of non-unique fans
 
+-- Change to your database
+USE holberton;
+
+-- Create a view to rank origins by the number of fans
+CREATE VIEW origin_fan_ranking AS
 SELECT 
-    band_name,
-    CASE
-        WHEN split IS NULL THEN 2022 - formed
-        ELSE split - formed
-    END AS lifespan
+    origin,
+    SUM(fans) AS nb_fans
 FROM 
     metal_bands
-WHERE 
-    main_style = 'Glam rock'
+GROUP BY 
+    origin
 ORDER BY 
-    lifespan DESC;
+    nb_fans DESC;
+
+-- Select from the view
+SELECT 
+    origin,
+    nb_fans
+FROM 
+    origin_fan_ranking;
