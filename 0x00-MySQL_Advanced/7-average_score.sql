@@ -1,20 +1,24 @@
 -- This script creates a stored procedure ComputeAverageScoreForUser that computes and stores the average score for a student.
--- The procedure takes one input: user_id, which is the id of the user for whom the average score is to be computed.
 
+-- Comment: Drop the procedure if it exists
+DROP PROCEDURE IF EXISTS ComputeAverageScoreForUser;
+
+-- Comment: Create the procedure
 DELIMITER //
 
 CREATE PROCEDURE ComputeAverageScoreForUser(IN user_id INT)
 BEGIN
-    -- Compute the average score for the specified user
-    UPDATE users
-    SET average_score = (
-        SELECT AVG(score)
-        FROM corrections
-        WHERE user_id = user_id
-    )
-    WHERE id = user_id;
-END;
+    DECLARE avg_score FLOAT;
 
-//
+    -- Comment: Calculate the average score for the given user_id
+    SELECT AVG(score) INTO avg_score
+    FROM corrections
+    WHERE user_id = user_id;
+
+    -- Comment: Update the user's average_score in the users table
+    UPDATE users
+    SET average_score = avg_score
+    WHERE id = user_id;
+END //
 
 DELIMITER ;
