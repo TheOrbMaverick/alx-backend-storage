@@ -1,3 +1,2 @@
 // listing all the databases
-use admin
-db.adminCommand('listDatabases')
+show dbs

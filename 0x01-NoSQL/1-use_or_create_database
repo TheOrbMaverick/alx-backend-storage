@@ -1,0 +1,4 @@
+#!/bin/bash
+// my comment
+
+mongo --eval "db = db.getSiblingDB('my_db')"
