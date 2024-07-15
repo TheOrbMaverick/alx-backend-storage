@@ -1,0 +1,3 @@
+// my comment
+print("Number of documents in the school collection:")
+print(db.school.countDocuments())
