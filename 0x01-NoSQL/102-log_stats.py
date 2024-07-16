@@ -1,10 +1,9 @@
 #!/usr/bin/env python3
 """Module to provide stats about Nginx logs stored in MongoDB"""
-
 from pymongo import MongoClient
 
 
-if __name__ == "__main__":
+def main():
     """
     Provides statistics about Nginx logs stored in MongoDB.
     """
@@ -41,3 +40,6 @@ if __name__ == "__main__":
     print("\nTop 10 most present IPs:")
     for ip in top_ips:
         print(f"\t{ip['_id']}: {ip['count']}")
+
+if __name__ == "__main__":
+    main()
