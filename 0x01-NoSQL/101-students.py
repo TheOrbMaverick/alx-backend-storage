@@ -12,7 +12,7 @@ def top_students(mongo_collection):
     Returns:
         List[Dict]: A list of dictionaries representing the students sorted by average score.
     """
-    pipeline = [
+    top_student = mongo_collection.aggregate([
         {
             "$project": {
                 "name": 1,
@@ -20,5 +20,6 @@ def top_students(mongo_collection):
             }
         },
         { "$sort": { "averageScore": -1 } }
-    ]
-    return list(mongo_collection.aggregate(pipeline))
+    ])
+
+    return top_student
