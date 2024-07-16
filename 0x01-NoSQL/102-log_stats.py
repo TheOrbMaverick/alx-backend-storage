@@ -1,40 +1,33 @@
 #!/usr/bin/env python3
-"""Module to return all students sorted by average score and top 10 most present IPs"""
+"""Module to provide stats about Nginx logs stored in MongoDB"""
+
+from pymongo import MongoClient
 
 
-def top_students(mongo_collection):
+if __name__ == "__main__":
     """
-    Returns all students sorted by average score.
-
-    Args:
-        mongo_collection (Collection): The pymongo collection object.
-
-    Returns:
-        List[Dict]: A list of dictionaries representing the students sorted by average score.
+    Provides statistics about Nginx logs stored in MongoDB.
     """
-    pipeline = [
-        {
-            "$project": {
-                "name": 1,
-                "averageScore": {"$avg": "$scores.score"}
-            }
-        },
-        {"$sort": {"averageScore": -1}}
-    ]
-    return list(mongo_collection.aggregate(pipeline))
+    client = MongoClient('mongodb://127.0.0.1:27017')
+    collection = client.logs.nginx
 
+    # Count total number of logs
+    total_logs = collection.count_documents({})
+    print(f"{total_logs} logs")
 
-def top_ips(logs_collection):
-    """
-    Returns the top 10 most present IPs in the logs collection.
+    # Count the number of logs for each HTTP method
+    methods = ["GET", "POST", "PUT", "PATCH", "DELETE"]
+    print("Methods:")
+    for method in methods:
+        count = collection.count_documents({"method": method})
+        print(f"\tmethod {method}: {count}")
 
-    Args:
-        logs_collection (Collection): The pymongo collection object.
+    # Count the number of GET requests with path /status
+    status_check = collection.count_documents({"method": "GET", "path": "/status"})
+    print(f"{status_check} status check")
 
-    Returns:
-        List[Dict]: A list of dictionaries representing the top 10 most present IPs.
-    """
-    pipeline = [
+    # Get the top 10 most present IPs
+    top_ips = collection.aggregate([
         {
             "$group": {
                 "_id": "$ip",
@@ -43,5 +36,8 @@ def top_ips(logs_collection):
         },
         {"$sort": {"count": -1}},
         {"$limit": 10}
-    ]
-    return list(logs_collection.aggregate(pipeline))
+    ])
+
+    print("\nTop 10 most present IPs:")
+    for ip in top_ips:
+        print(f"\t{ip['_id']}: {ip['count']}")
