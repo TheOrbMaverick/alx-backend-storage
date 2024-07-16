@@ -8,8 +8,7 @@ if __name__ == "__main__":
     Provides statistics about Nginx logs stored in MongoDB.
     """
     client = MongoClient('mongodb://127.0.0.1:27017')
-    db = client.log
-    collection = db.nginx
+    collection = client.logs.nginx
 
     total_logs = collection.count_documents({})
     print(f"{total_logs} logs")
