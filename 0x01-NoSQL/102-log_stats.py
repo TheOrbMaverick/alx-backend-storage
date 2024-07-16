@@ -31,9 +31,16 @@ if __name__ == "__main__":
             }
         },
         {"$sort": {"count": -1}},
-        {"$limit": 10}
+        {"$limit": 10},
+        {"$project": {
+            "_id": 0,
+            "ip": "$_id",
+            "count": 1
+        }}
     ])
 
-    print("\nTop 10 most present IPs:")
-    for ip in top_ips:
-        print(f"\t{ip['_id']}: {ip['count']}")
+    print("IPs:")
+    for top_ip in top_ips:
+        ip = top_ip.get("ip")
+        count = top_ip.get("count")
+        print(f'\t{ip} {count}')
