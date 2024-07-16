@@ -3,7 +3,7 @@
 from pymongo import MongoClient
 
 
-def main():
+if __name__ == "__main__":
     """
     Provides statistics about Nginx logs stored in MongoDB.
     """
@@ -40,6 +40,3 @@ def main():
     print("\nTop 10 most present IPs:")
     for ip in top_ips:
         print(f"\t{ip['_id']}: {ip['count']}")
-
-if __name__ == "__main__":
-    main()
