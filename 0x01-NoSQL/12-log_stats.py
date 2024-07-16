@@ -3,7 +3,7 @@
 from pymongo import MongoClient
 
 
-def nginx_stats():
+if __name__ == "__main__":
     """
     Provides statistics about Nginx logs stored in MongoDB.
     """
@@ -22,7 +22,3 @@ def nginx_stats():
 
     status_check = collection.count_documents({"method": "GET", "path": "/status"})
     print(f"{status_check} status check")
-
-
-if __name__ == "__main__":
-    nginx_stats()
