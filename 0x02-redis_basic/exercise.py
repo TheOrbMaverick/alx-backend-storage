@@ -18,6 +18,7 @@ def count_calls(method: Callable) -> Callable:
         return method(self, *args, **kwargs)
     return wrapper
 
+
 def call_history(method: Callable) -> Callable:
     """Decorator to store the history of inputs and outputs for a method"""
     @wraps(method)
@@ -31,6 +32,7 @@ def call_history(method: Callable) -> Callable:
         return result
     return wrapper
 
+
 def replay(method: Callable) -> None:
     """Display the history of calls of a particular function"""
     redis_client = redis.Redis()
@@ -39,7 +41,7 @@ def replay(method: Callable) -> None:
 
     inputs = redis_client.lrange(input_key, 0, -1)
     outputs = redis_client.lrange(output_key, 0, -1)
-    
+
     print(f"{method.__qualname__} was called {len(inputs)} times:")
     for inp, out in zip(inputs, outputs):
         print(f"{method.__qualname__}(*{inp.decode('utf-8')}) -> {out.decode('utf-8')}")
@@ -60,8 +62,12 @@ class Cache:
         self._redis.set(key, data)
         return key
 
-    def get(self, key: str, fn: Optional[Callable] = None) -> Union[str, bytes, int, float, None]:
-        """Retrieve data from Redis and optionally apply a conversion function"""
+    def get(self, key: str, fn: Optional[Callable] = None
+            ) -> Union[str, bytes, int, float, None]:
+        """
+        Retrieve data from Redis and optionally
+        apply a conversion function
+        """
         data = self._redis.get(key)
         if data is None:
             return None
