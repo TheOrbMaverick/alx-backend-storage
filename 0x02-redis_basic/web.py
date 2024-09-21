@@ -14,7 +14,7 @@ redis_client = redis.Redis()
 def cache_result(method: Callable) -> Callable:
     """Decorator to cache the result of a function"""
     @wraps(method)
-    def wrapper(url: str) -> str:
+    def wrapper(url):
         """
         Wrapper function to cache the result and track access
         """
@@ -27,10 +27,10 @@ def cache_result(method: Callable) -> Callable:
 
         # Get result from the original method
         result = method(url)
-
-        redis_client.set(f"count:{url}", 0)
+        # redis_client.set(f"count:{url}", 0)
         redis_client.setex(result_key, 10, result)
         return result
+
     return wrapper
 
 
