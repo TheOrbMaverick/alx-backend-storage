@@ -1,45 +1,36 @@
 #!/usr/bin/env python3
 """
-Web module with get_page function
+web cache and tracker
 """
 import requests
 import redis
-from typing import Callable
 from functools import wraps
 
-# Initialize Redis client
-redis_client = redis.Redis()
+store = redis.Redis()
 
 
-def cache_result(method: Callable) -> Callable:
-    """Decorator to cache the result of a function"""
+def count_url_access(method):
+    """ Decorator counting how many times
+    a URL is accessed """
     @wraps(method)
     def wrapper(url):
-        """
-        Wrapper function to cache the result and track access
-        """
-        # Increment the count for the URL
-        redis_client.incr(f"count:{url}")
+        cached_key = "cached:" + url
+        cached_data = store.get(cached_key)
+        if cached_data:
+            return cached_data.decode("utf-8")
 
-        # Check if the result is already cached
-        result_key = redis_client.get(f"result:{url}")
+        count_key = "count:" + url
+        html = method(url)
 
-        if result_key:
-            return result_key.decode('utf-8')
-
-        # Get result from the original method if not cached
-        result = method(url)
-
-        # Cache the result for 10 seconds
-        redis_client.setex(f"result:{url}", 11, result)
-
-        return result
-
+        store.incr(count_key)
+        store.set(cached_key, html)
+        store.expire(cached_key, 10)
+        return html
     return wrapper
 
 
-@cache_result
+@count_url_access
 def get_page(url: str) -> str:
-    """Get the HTML content of a URL and cache it"""
-    response = requests.get(url)
-    return response.text
+    """ Returns HTML content of a url """
+    res = requests.get(url)
+    return res.text
