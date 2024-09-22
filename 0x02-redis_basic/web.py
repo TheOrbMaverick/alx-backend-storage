@@ -1,41 +1,32 @@
 #!/usr/bin/env python3
-"""
-Web module with get_page function
-"""
-import requests
-import redis
-from typing import Callable
+""" Redis  count request Module """
+
 from functools import wraps
+import redis
+import requests
+from typing import Callable
 
-# Initialize Redis client
-redis_client = redis.Redis()
+redis_ = redis.Redis()
 
 
-def cache_result(method: Callable) -> Callable:
-    """Decorator to cache the result of a function"""
+def count_requests(method: Callable) -> Callable:
+    """ Decortator for counting """
     @wraps(method)
-    def wrapper(url):
-        """
-        Wrapper function to cache the result and track access
-        """
-        redis_client.incr(f"count:{url}")
-        result_key = redis_client.get(f"result:{url}")
-
-        # Check if the result is cached
-        if result_key:
-            return result_key.decode('utf-8')
-
-        # Get result from the original method
-        result = method(url)
-        # redis_client.set(f"count:{url}", 0)
-        redis_client.setex(result_key, 10, result)
-        return result
+    def wrapper(url):  # sourcery skip: use-named-expression
+        """ Wrapper for decorator """
+        redis_.incr(f"count:{url}")
+        cached_html = redis_.get(f"cached:{url}")
+        if cached_html:
+            return cached_html.decode('utf-8')
+        html = method(url)
+        redis_.setex(f"cached:{url}", 10, html)
+        return html
 
     return wrapper
 
 
-@cache_result
+@count_requests
 def get_page(url: str) -> str:
-    """Get the HTML content of a URL and cache it"""
-    response = requests.get(url)
-    return response.text
+    """ Obtain the HTML content of a  URL """
+    req = requests.get(url)
+    return req.text
