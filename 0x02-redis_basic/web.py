@@ -20,7 +20,7 @@ def cache_result(method: Callable) -> Callable:
         """
         # Increment the count for the URL
         redis_client.incr(f"count:{url}")
-        
+
         # Check if the result is already cached
         result_key = redis_client.get(f"result:{url}")
 
@@ -29,10 +29,10 @@ def cache_result(method: Callable) -> Callable:
 
         # Get result from the original method if not cached
         result = method(url)
-        
+
         # Cache the result for 10 seconds
-        redis_client.setex(f"result:{url}", 10, result)
-        
+        redis_client.setex(f"result:{url}", 11, result)
+
         return result
 
     return wrapper
